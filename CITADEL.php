@@ -1,5 +1,5 @@
 <?php
-// CITADEL TBK (Telegram Bot SDK) V.1 By NIMIX3 for MioGram Platform.
+// CITADEL TBK (Telegram Bot SDK) V.1.1 By NIMIX3 for MioGram Platform.
 // NOTE : YOU CANNOT EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
 // Under GNU GPL V.2 License
 namespace CITADEL;
@@ -179,7 +179,7 @@ namespace CITADEL;
         }
 
         public function getCommandData(){
-        return str_replace((explode($this->DATA["message"]["text"])[0])." ",'',$this->DATA["message"]["text"]);
+        return str_replace((explode(" ",$this->DATA["message"]["text"])[0])." ",'',$this->DATA["message"]["text"]);
         }
 
         public function getMessage()
@@ -213,7 +213,7 @@ namespace CITADEL;
           $apiendpoint = ucfirst($type);
           if ($type == 'photo' || $type == "audio" || $type == "video" || $type == "document") {
           $mimetype = mime_content_type($content);
-          $content = new CurlFile($content, $mimetype);
+          @ $content = new CurlFile($content, $mimetype);
            } elseif ($type == "message") {
            $type = 'text';
           }
@@ -239,12 +239,12 @@ namespace CITADEL;
        curl_close($ch);
        }
 
-        public function MioStackMsg($type, $user, $content, $keyboard="" , $Secret="")
+        public function SendMessageMioStack($type, $user, $content, $keyboard="" , $Secret="")
         {
           $apiendpoint = ucfirst($type);
           if ($type == 'photo' || $type == "audio" || $type == "video" || $type == "document") {
           $mimetype = mime_content_type($content);
-          $content = new CurlFile($content, $mimetype);
+          @ $content = new CurlFile($content, $mimetype);
            } elseif ($type == "message") {
            $type = 'text';
           }
@@ -274,12 +274,22 @@ namespace CITADEL;
 
         public function SetKeyboard($userid,$message,$keyboard,$onetime=false,$resize=true)
         {
-          self::sendmessage('message', $userid, $message, json_encode(array('keyboard' => $keyboard, 'resize_keyboard' => (bool)$resize, 'one_time_keyboard' => (bool)$onetime)));
+            $this->SendMessage('message', $userid, $message, json_encode(array('keyboard' => $keyboard, 'resize_keyboard' => (bool)$resize, 'one_time_keyboard' => (bool)$onetime)));
         }
 
         public function NoKeyboard($userid,$message)
         {
-          self::SendMessage('message', $userid, $message, json_encode(array('hide_keyboard' => true)));  
+            $this->SendMessage('message', $userid, $message, json_encode(array('hide_keyboard' => true)));  
+        }
+		
+		public function SetKeyboardMioStack($userid,$message,$keyboard,$Secret="",$onetime=false,$resize=true)
+        {
+            $this->SendMessageMioStack('message', $userid, $message, json_encode(array('keyboard' => $keyboard, 'resize_keyboard' => (bool)$resize, 'one_time_keyboard' => (bool)$onetime)));
+        }
+
+        public function NoKeyboardMioStack($userid,$message,$Secret="")
+        {
+            $this->SendMessageMioStack('message', $userid, $message, json_encode(array('hide_keyboard' => true)));  
         }
 
         public function AgentAction($Secret,$Func,$Phone,$Misc,$Message,$Robot)
@@ -330,7 +340,6 @@ namespace CITADEL;
             }
             return $phone;
         }
-    
     }
 
 use CITADEL\_xCITADEL as CITADEL;
