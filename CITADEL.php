@@ -108,7 +108,7 @@ namespace CITADEL;
         return $this->DATA["message"]["forward_from"]["first_name"];
         }
 
-        public function getForwardedLastName(){
+        public function getForwardedLastName(){ 
         return $this->DATA["message"]["forward_from"]["last_name"];
         }
 
