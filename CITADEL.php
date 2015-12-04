@@ -1,6 +1,5 @@
 <?php
 // CITADEL TBK (Telegram Bot SDK) V.1.1 By NIMIX3 for MioGram Platform.
-// NOTE : YOU CANNOT EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
 // Under GNU GPL V.2 License
 namespace CITADEL;
     class _xCITADEL
