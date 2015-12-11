@@ -2,7 +2,7 @@
 All Projects Of MioGram Platform
 
 #CITADEL BOT SDK Library :
- CITADEL TBK (Telegram Bot SDK) V.1.1 By NIMIX3 for MioGram Platform.
+ CITADEL TBK (Telegram Bot SDK) V.2 By NIMIX3 for MioGram Platform.
  NOTE : YOU CANNOT EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
  Under GNU GPL V.2 License
  
