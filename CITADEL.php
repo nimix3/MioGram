@@ -1,5 +1,6 @@
 <?php
-// CITADEL TBK (Telegram Bot SDK) V.1.1 By NIMIX3 for MioGram Platform.
+// CITADEL TBK (Telegram Bot SDK) V.2 By NIMIX3 for MioGram Platform.
+// NOTE : YOU CANNOT EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
 // Under GNU GPL V.2 License
 namespace CITADEL;
     class _xCITADEL
@@ -12,7 +13,7 @@ namespace CITADEL;
         $this->DATA = json_decode(file_get_contents('php://input'), true);
         }
 
-        public function sendFile($type, $user, $content)
+        public function SendFile($type, $user, $content)
         {
           $api_key = $this->API;
          $apiendpoint = ucfirst($type);
@@ -34,8 +35,6 @@ namespace CITADEL;
         ),
         CURLOPT_POSTFIELDS => array(
             'chat_id' => $user,
-			'parse_mode' => 'Markdown',
-			//'reply_markup' => $keyboard,
             $type => $content
         ),
         CURLOPT_TIMEOUT => 0,
@@ -46,7 +45,7 @@ namespace CITADEL;
        curl_close($ch);
         }
 
-        public function GetFileFromUrl($url,$dir="Data/",$hash="")
+        public function SaveFileFromUrl($url,$dir="Data/",$hash="")
         {
            $filename = str_replace("/","",parse_url($url,PHP_URL_PATH));
         @ file_put_contents($dir.$hash.$filename,file_get_contents($url));
@@ -57,7 +56,7 @@ namespace CITADEL;
         return NULL;
         }
 
-        public function getRawData()
+        public function GetRawData()
         {
         return $this->DATA;
         }
@@ -84,129 +83,310 @@ namespace CITADEL;
        curl_close($ch);
        }
 
-        public function getChatName(){
+        public function GetChatName(){
         return $this->DATA["message"]["chat"]["title"];
         }
 
-        public function getChatID(){
+        public function GetChatID(){
         return $this->DATA["message"]["chat"]["id"];
         }
 
-        public function getChatType(){
+        public function GetChatType(){
         return $this->DATA["message"]["chat"]["type"];
         }
 
-        public function getChatUsername(){
+        public function GetChatUsername(){
         return $this->DATA["message"]["chat"]["username"];
         }
 
-        public function getForwardedUserID(){
+        public function GetForwardedUserID(){
         return $this->DATA["message"]["forward_from"]["id"];
         }
 
-        public function getForwardedFirstName(){
+        public function GetForwardedFirstName(){
         return $this->DATA["message"]["forward_from"]["first_name"];
         }
 
-        public function getForwardedLastName(){ 
+        public function GetForwardedLastName(){
         return $this->DATA["message"]["forward_from"]["last_name"];
         }
 
-        public function getForwardedUsername(){
+        public function GetForwardedUsername(){
         return $this->DATA["message"]["forward_from"]["username"];
         }
 
-        public function getContactPhone(){
+        public function GetContactPhone(){
         return $this->DATA["message"]["contact"]["phone_number"];
         }
 
-        public function getContactUserID(){
+        public function GetContactUserID(){
         return $this->DATA["message"]["contact"]["user_id"];
         }
 
-        public function getContactFirstName(){
+        public function GetContactFirstName(){
         return $this->DATA["message"]["contact"]["first_name"];
         }
 
-        public function getContactLastName(){
+        public function GetContactLastName(){
         return $this->DATA["message"]["contact"]["last_name"];
         }
 
-        public function getLocationLongitude(){
+        public function GetLocationLongitude(){
         return $this->DATA["message"]["location"]["longitude"];
         }
 
-        public function getLocationLatitude(){
+        public function GetLocationLatitude(){
         return $this->DATA["message"]["location"]["latitude"];
         }
 
-        public function getNewChatAddedID(){
+        public function GetNewChatAddedID(){
         return $this->DATA["message"]["new_chat_participant"]["id"];
         }
 
-        public function getNewChatAddedFirstName(){
+        public function GetNewChatAddedFirstName(){
         return $this->DATA["message"]["new_chat_participant"]["first_name"];
         }
 
-        public function getNewChatAddedLastName(){
+        public function GetNewChatAddedLastName(){
         return $this->DATA["message"]["new_chat_participant"]["last_name"];
         }
 
-        public function getNewChatAddedUsername(){
+        public function GetNewChatAddedUsername(){
         return $this->DATA["message"]["new_chat_participant"]["username"];
         }
 
-        public function getNewChatRemovedID(){
+        public function GetNewChatRemovedID(){
         return $this->DATA["message"]["left_chat_participant"]["id"];
         }
 
-        public function getNewChatRemovedFirstName(){
+        public function GetNewChatRemovedFirstName(){
         return $this->DATA["message"]["left_chat_participant"]["first_name"];
         }
 
-        public function getNewChatRemovedLastName(){
+        public function GetNewChatRemovedLastName(){
         return $this->DATA["message"]["left_chat_participant"]["last_name"];
         }
 
-        public function getNewChatRemovedUsername(){
+        public function GetNewChatRemovedUsername(){
         return $this->DATA["message"]["left_chat_participant"]["username"];
         }
 
-        public function getCommand()
+        public function GetCommand()
         {
         return explode(" ", $this->DATA["message"]["text"])[0];
         }
 
-        public function getCommandData(){
+        public function GetCommandData(){
         return str_replace((explode(" ",$this->DATA["message"]["text"])[0])." ",'',$this->DATA["message"]["text"]);
         }
 
-        public function getMessage()
+        public function GetMessage()
         {
         return $this->DATA["message"]["text"];
         }
 
-        public function getUserID()
+        public function GetUserID()
         {
         return $this->DATA["message"]["from"]["id"];
         }
 
-        public function getUsername()
+        public function GetUsername()
         {
         return $this->DATA["message"]["from"]["username"];
         }
 
-        public function getFirstName()
+        public function GetFirstName()
         {
         return $this->DATA["message"]["from"]["first_name"];
         }
 
-        public function getLastName()
+        public function GetLastName()
         {
         return $this->DATA["message"]["from"]["last_name"];
         }
 
-        public function SendMessage($type, $user, $content, $keyboard="")
+        public function GetMessageDate()
+        {
+            return $this->DATA["message"]["date"];
+        }
+
+        public function GetMessageForwardedDate()
+        {
+            return $this->DATA["message"]["forward_date"];
+        }
+
+        public function GetMessageID()
+        {
+            return $this->DATA["message"]["message_id"];
+        }
+
+        public function GetMessageCaption()
+        {
+            return $this->DATA["message"]["caption"];
+        }
+
+        public function GetNewChatTitle()
+        {
+            return $this->DATA["message"]["new_chat_title"];
+        }
+
+        public function IsChatDeletePhoto()
+        {
+            return $this->DATA["message"]["delete_chat_photo"];
+        }
+
+        public function IsSuperGroupCreated()
+        {
+            return $this->DATA["message"]["supergroup_chat_created"];
+        }
+
+        public function IsGroupCreated()
+        {
+            return $this->DATA["message"]["group_chat_created"];
+        }
+
+        public function IsChannelCreated()
+        {
+            return $this->DATA["message"]["channel_chat_created"];
+        }
+
+        public function GetMigratedToSuperGroup()
+        {
+            return $this->DATA["message"]["migrate_to_chat_id"];
+        }
+
+        public function GetFileID()
+        {
+            $types = array("audio","photo","video","voice","sticker","document");
+            foreach($types as $type)
+            {
+                if(isset($this->DATA["message"]["$type"]["file_id"]) and !empty($this->DATA["message"]["$type"]["file_id"]))
+                    return $this->DATA["message"]["$type"]["file_id"];
+                else if(isset(array_reverse($this->DATA["message"]["photo"])[0]["file_id"]) and !empty(array_reverse($this->DATA["message"]["photo"])[0]["file_id"]))
+                {
+                    return array_reverse($this->DATA["message"]["photo"])[0]["file_id"];
+                }
+            }
+            return NULL;
+        }
+
+        public function GetFileType()
+        {
+            $types = array("audio","photo","video","voice","sticker","document");
+            foreach($types as $type)
+            {
+                if(isset($this->DATA["message"]["$type"]["file_id"]) and !empty($this->DATA["message"]["$type"]["file_id"]))
+                    return $type;
+                else if(isset(array_reverse($this->DATA["message"]["photo"])[0]["file_id"]) and !empty(array_reverse($this->DATA["message"]["photo"])[0]["file_id"]))
+                {
+                    return "photo";
+                }
+            }
+            return NULL;
+        }
+
+        public function GetFileProperty()
+        {
+            $types = array("audio","photo","video","voice","sticker","document");
+            foreach($types as $type)
+            {
+                if(isset($this->DATA["message"]["$type"]["file_id"]) and !empty($this->DATA["message"]["$type"]["file_id"]))
+                    return $this->DATA["message"]["$type"];
+                else if(isset(array_reverse($this->DATA["message"]["photo"])[0]["file_id"]) and !empty(array_reverse($this->DATA["message"]["photo"])[0]["file_id"]))
+                {
+                    return $this->DATA["message"]["photo"];
+                }
+            }
+            return NULL;
+        }
+
+        public function GetFileObject($fileid)
+        {
+            $api_key = $this->API;
+            
+            $ch = curl_init("https://api.telegram.org/bot".$api_key."/getFile");
+            curl_setopt_array($ch, array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HEADER => false,
+            CURLOPT_HTTPHEADER => array(
+                'Host: api.telegram.org',
+                'Content-Type: multipart/form-data'
+            ),
+            CURLOPT_POSTFIELDS => array(
+                'file_id' => $fileid
+            ),
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_CONNECTTIMEOUT => 6000,
+            CURLOPT_SSL_VERIFYPEER => false
+            ));
+            $res = curl_exec($ch);
+            curl_close($ch);
+            if(isset($res) and !empty($res))
+            {
+                $res = json_decode($res,true);
+                return array('ID' => $res['result']['file_id'],'Size' => $res['result']['file_size'],'Path' => $res['result']['file_path']);
+            }
+            else
+                return NULL;
+        }
+
+        public function GetProfilePhoto($userid,$offset='',$limit='')
+        {
+            $api_key = $this->API;
+            
+            $ch = curl_init("https://api.telegram.org/bot".$api_key."/getUserProfilePhotos");
+            curl_setopt_array($ch, array(
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_HEADER => false,
+            CURLOPT_HTTPHEADER => array(
+                'Host: api.telegram.org',
+                'Content-Type: multipart/form-data'
+            ),
+            CURLOPT_POSTFIELDS => array(
+                'user_id' => $userid,
+                'offset' => $offset,
+                'limit' => $limit
+            ),
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_CONNECTTIMEOUT => 6000,
+            CURLOPT_SSL_VERIFYPEER => false
+            ));
+            $res = curl_exec($ch);
+            curl_close($ch);
+            if(isset($res) and !empty($res))
+            {
+                $res = json_decode($res,true);
+                return array('ID' => array_reverse($res['result']['photos'][0])[0]['file_id'] , 'Width' => array_reverse($res['result']['photos'][0])[0]['width'] , 'Height' => array_reverse($res['result']['photos'][0])[0]['height'] , 'Size' => array_reverse($res['result']['photos'][0])[0]['file_size']);
+            }
+            else
+                return NULL;
+        }
+
+        public function SaveUserFile($fn,$path='',$hash='')
+        {
+            $fname = $this->GetFileObject($this->GetFileID())['Path'];
+            $faddr = $this->SaveFileFromUrl("https://api.telegram.org/file/bot".$this->API."/$fname",$path,$hash);
+            if(!isset($fn) or empty($fn))
+            {
+            $fn = md5(rand(1000,9999));
+            }
+            $ext = pathinfo($faddr, PATHINFO_EXTENSION);
+            if(file_exists($faddr))
+            {
+                @ rename($faddr,dirname($faddr)."/".$fn.".".$ext);
+                return dirname($faddr)."/".$fn.".".$ext;
+            }
+        }
+
+        public function GetFileUrl($fid)
+        {
+            $fpath = $this->GetFileObject($fid)['Path'];
+            return "https://api.telegram.org/file/bot".$this->API."/$fpath";
+        }
+
+        public function SendMessage($type, $user, $content, $keyboard="", $replyid="", $web=true)
         {
           $api_key = $this->API;
           $apiendpoint = ucfirst($type);
@@ -228,6 +408,8 @@ namespace CITADEL;
         CURLOPT_POSTFIELDS => array(
             'chat_id' => $user,
 			'reply_markup' => $keyboard,
+            'reply_to_message_id' => $replyid,
+            'disable_web_page_preview' => $web,
             $type => $content
         ),
         CURLOPT_TIMEOUT => 0,
@@ -270,6 +452,46 @@ namespace CITADEL;
        curl_exec($ch);
        curl_close($ch);
        }
+
+        public function SendFileMioStack($type, $user, $content, $Secret="")
+        {
+            $api_key = $this->API;
+            $apiendpoint = ucfirst($type);
+            if ($type == 'photo' || $type == "audio" || $type == "video" || $type == "document") {
+                $mimetype = mime_content_type($content);
+                $ext = pathinfo($content, PATHINFO_EXTENSION);
+                $content = '@'.$content;
+            } elseif ($type == "message") {
+                $type = 'text';
+            }
+            $ch = curl_init("https://miogram.net/Terminal.php");
+            curl_setopt_array($ch, array(
+         CURLOPT_RETURNTRANSFER => true,
+         CURLOPT_POST => true,
+         CURLOPT_HEADER => false,
+         CURLOPT_HTTPHEADER => array(
+             'Host: api.telegram.org',
+             'Content-Type: multipart/form-data'
+         ),
+         CURLOPT_POSTFIELDS => array(
+             'chat_id' => $user,
+             'parse_mode' => 'Markdown',
+             'Secret' => $Secret,
+             'EndPoint' => $apiendpoint,
+              $type => $content
+         ),
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_CONNECTTIMEOUT => 6000,
+         CURLOPT_SSL_VERIFYPEER => false
+        ));
+            curl_exec($ch);
+            curl_close($ch);
+        }
+
+        public function SendReply($userid, $message, $replyid="")
+        {
+            $this->SendMessage('message', $userid, $message, "", $replyid);
+        }
 
         public function SetKeyboard($userid,$message,$keyboard,$onetime=false,$resize=true)
         {
@@ -342,5 +564,4 @@ namespace CITADEL;
     }
 
 use CITADEL\_xCITADEL as CITADEL;
-
 ?>
