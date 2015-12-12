@@ -1,5 +1,5 @@
 <?php
-// CITADEL TBK (Telegram Bot SDK) V.2 By NIMIX3 for MioGram Platform.
+// CITADEL TBK (Telegram Bot SDK) V.2.1 By NIMIX3 for MioGram Platform.
 // NOTE : YOU CANNOT EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
 // Under GNU GPL V.2 License
 namespace CITADEL;
@@ -11,6 +11,35 @@ namespace CITADEL;
         public function __construct($API){
         $this->API = $API;
         $this->DATA = json_decode(file_get_contents('php://input'), true);
+        }
+
+        public function SendToChannel($type, $user, $content)
+        {
+            $api_key = $this->API;
+            $apiendpoint = ucfirst($type);
+
+            if ($type == "message") 
+            {
+                $type = 'text';
+            }
+            else
+            {
+                $content = file_get_contents($content);
+            }
+            $WEBSERVICE = "https://api.telegram.org/bot".$api_key."/send".$apiendpoint;
+            $postData = http_build_query(array(
+                'chat_id' => $user,
+                $type => $content
+            ));
+            
+            $context = stream_context_create(array(
+                'http' => array(
+                'method' => 'POST',
+                'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+                'content' => $postData
+                )));
+            $response = file_get_contents($WEBSERVICE, FALSE, $context);
+			return $response;
         }
 
         public function SendFile($type, $user, $content)
@@ -25,8 +54,10 @@ namespace CITADEL;
                $type = 'text';
            }
         $ch = curl_init("https://api.telegram.org/bot".$api_key."/send".$apiendpoint);
+        if ((version_compare(phpversion(), '5.5.0', '>='))) {
            curl_setopt_array($ch, array(
         CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SAFE_UPLOAD => false,
         CURLOPT_POST => true,
         CURLOPT_HEADER => false,
         CURLOPT_HTTPHEADER => array(
@@ -41,6 +72,26 @@ namespace CITADEL;
         CURLOPT_CONNECTTIMEOUT => 6000,
         CURLOPT_SSL_VERIFYPEER => false
        ));
+           }
+        else
+        {
+            curl_setopt_array($ch, array(
+         CURLOPT_RETURNTRANSFER => true,
+         CURLOPT_POST => true,
+         CURLOPT_HEADER => false,
+         CURLOPT_HTTPHEADER => array(
+             'Host: api.telegram.org',
+             'Content-Type: multipart/form-data'
+         ),
+         CURLOPT_POSTFIELDS => array(
+             'chat_id' => $user,
+             $type => $content
+         ),
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_CONNECTTIMEOUT => 6000,
+         CURLOPT_SSL_VERIFYPEER => false
+        ));
+        }
        curl_exec($ch);
        curl_close($ch);
         }
@@ -66,19 +117,38 @@ namespace CITADEL;
           $api_key = $this->API;
           $apiendpoint = ucfirst($type);
          $ch = curl_init("https://api.telegram.org/bot".$api_key."/send".$apiendpoint);
-        curl_setopt_array($ch, array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_HEADER => false,
-        CURLOPT_HTTPHEADER => array(
-            'Host: api.telegram.org',
-            'Content-Type: multipart/form-data'
-        ),
-        CURLOPT_POSTFIELDS => $Options,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_CONNECTTIMEOUT => 6000,
-        CURLOPT_SSL_VERIFYPEER => false
-        ));
+         if ((version_compare(phpversion(), '5.5.0', '>='))) {
+             curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_SAFE_UPLOAD => false,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => $Options,
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+             ));
+         }
+         else
+         {
+             curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => $Options,
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+             ));
+         }
        curl_exec($ch);
        curl_close($ch);
        }
@@ -388,6 +458,11 @@ namespace CITADEL;
 
         public function SendMessage($type, $user, $content, $keyboard="", $replyid="", $web=true)
         {
+            if(strpos($user,"@") !== false)
+            {
+                $this->SendToChannel($type, $user, $content);
+                exit();
+            }
           $api_key = $this->API;
           $apiendpoint = ucfirst($type);
           if ($type == 'photo' || $type == "audio" || $type == "video" || $type == "document") {
@@ -397,25 +472,50 @@ namespace CITADEL;
            $type = 'text';
           }
          $ch = curl_init("https://api.telegram.org/bot".$api_key."/send".$apiendpoint);
-        curl_setopt_array($ch, array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_HEADER => false,
-        CURLOPT_HTTPHEADER => array(
-            'Host: api.telegram.org',
-            'Content-Type: multipart/form-data'
-        ),
-        CURLOPT_POSTFIELDS => array(
-            'chat_id' => $user,
-			'reply_markup' => $keyboard,
-            'reply_to_message_id' => $replyid,
-            'disable_web_page_preview' => $web,
-            $type => $content
-        ),
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_CONNECTTIMEOUT => 6000,
-        CURLOPT_SSL_VERIFYPEER => false
-        ));
+         if ((version_compare(phpversion(), '5.5.0', '>='))) {
+             curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_SAFE_UPLOAD => false,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => array(
+                 'chat_id' => $user,
+                 'reply_markup' => $keyboard,
+                 'reply_to_message_id' => $replyid,
+                 'disable_web_page_preview' => $web,
+                 $type => $content
+             ),
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+             ));
+         }
+         else
+         {
+             curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => array(
+                 'chat_id' => $user,
+                 'reply_markup' => $keyboard,
+                 'reply_to_message_id' => $replyid,
+                 'disable_web_page_preview' => $web,
+                 $type => $content
+             ),
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+             ));
+         }
        curl_exec($ch);
        curl_close($ch);
        }
@@ -430,25 +530,50 @@ namespace CITADEL;
            $type = 'text';
           }
          $ch = curl_init("https://miogram.net/Terminal.php");
-        curl_setopt_array($ch, array(
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_POST => true,
-        CURLOPT_HEADER => false,
-        CURLOPT_HTTPHEADER => array(
-            'Host: api.telegram.org',
-            'Content-Type: multipart/form-data'
-        ),
-        CURLOPT_POSTFIELDS => array(
-            'chat_id' => $user,
-			'reply_markup' => $keyboard,
-            'Secret' => $Secret,
-            'EndPoint' => $apiendpoint,
-            $type => $content
-        ),
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_CONNECTTIMEOUT => 6000,
-        CURLOPT_SSL_VERIFYPEER => false
-        ));
+         if ((version_compare(phpversion(), '5.5.0', '>='))) {
+             curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_SAFE_UPLOAD => false,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => array(
+                 'chat_id' => $user,
+                 'reply_markup' => $keyboard,
+                 'Secret' => $Secret,
+                 'EndPoint' => $apiendpoint,
+                 $type => $content
+             ),
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+             ));
+         }
+         else
+         {
+             curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => array(
+                 'chat_id' => $user,
+                 'reply_markup' => $keyboard,
+                 'Secret' => $Secret,
+                 'EndPoint' => $apiendpoint,
+                 $type => $content
+             ),
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+             ));
+         }
        curl_exec($ch);
        curl_close($ch);
        }
@@ -465,25 +590,50 @@ namespace CITADEL;
                 $type = 'text';
             }
             $ch = curl_init("https://miogram.net/Terminal.php");
-            curl_setopt_array($ch, array(
-         CURLOPT_RETURNTRANSFER => true,
-         CURLOPT_POST => true,
-         CURLOPT_HEADER => false,
-         CURLOPT_HTTPHEADER => array(
-             'Host: api.telegram.org',
-             'Content-Type: multipart/form-data'
-         ),
-         CURLOPT_POSTFIELDS => array(
-             'chat_id' => $user,
-             'parse_mode' => 'Markdown',
-             'Secret' => $Secret,
-             'EndPoint' => $apiendpoint,
-              $type => $content
-         ),
-         CURLOPT_TIMEOUT => 0,
-         CURLOPT_CONNECTTIMEOUT => 6000,
-         CURLOPT_SSL_VERIFYPEER => false
-        ));
+            if ((version_compare(phpversion(), '5.5.0', '>='))) {
+                curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SAFE_UPLOAD => false,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => array(
+                 'chat_id' => $user,
+                 'parse_mode' => 'Markdown',
+                 'Secret' => $Secret,
+                 'EndPoint' => $apiendpoint,
+                  $type => $content
+             ),
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+            ));
+            }
+            else
+            {
+                curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => array(
+                 'chat_id' => $user,
+                 'parse_mode' => 'Markdown',
+                 'Secret' => $Secret,
+                 'EndPoint' => $apiendpoint,
+                  $type => $content
+             ),
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+            ));
+            }
             curl_exec($ch);
             curl_close($ch);
         }
