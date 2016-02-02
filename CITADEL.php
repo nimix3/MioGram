@@ -1,7 +1,7 @@
 <?php
-// CITADEL TBK (Telegram Bot SDK) V.2.1 By NIMIX3 for MioGram Platform.
-// NOTE : YOU CANNOT EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
-// Under GNU GPL V.2 License
+// CITADEL TBK (Telegram Bot SDK) V.3.0 By NIMIX3 for MioGram Platform.
+// NOTE : PLEASE DON'T EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
+// Under GNU GPL V.3 License
 namespace CITADEL;
     class _xCITADEL
     {
@@ -42,7 +42,7 @@ namespace CITADEL;
 			return $response;
         }
 
-        public function SendFile($type, $user, $content)
+        public function SendFile($type, $user, $content, $caption="", $title="")
         {
           $api_key = $this->API;
          $apiendpoint = ucfirst($type);
@@ -66,6 +66,9 @@ namespace CITADEL;
         ),
         CURLOPT_POSTFIELDS => array(
             'chat_id' => $user,
+			'caption'=> $caption,
+			'title'=> $title,
+			'parse_mode' => 'Markdown',
             $type => $content
         ),
         CURLOPT_TIMEOUT => 0,
@@ -85,6 +88,9 @@ namespace CITADEL;
          ),
          CURLOPT_POSTFIELDS => array(
              'chat_id' => $user,
+			'caption'=> $caption,
+			'title'=> $title,
+			'parse_mode' => 'Markdown',
              $type => $content
          ),
          CURLOPT_TIMEOUT => 0,
@@ -92,8 +98,9 @@ namespace CITADEL;
          CURLOPT_SSL_VERIFYPEER => false
         ));
         }
-       curl_exec($ch);
+       $res = curl_exec($ch);
        curl_close($ch);
+	   return $res;
         }
 
         public function SaveFileFromUrl($url,$dir="Data/",$hash="")
@@ -111,6 +118,62 @@ namespace CITADEL;
         {
         return $this->DATA;
         }
+		
+		public function SetWebHook($url)
+		{
+				$res = file_get_contents("https://api.telegram.org/bot".$this->API."/setWebhook?url=".$url);
+				return $res;
+		}
+		
+		public function GetUpdates($offset,$limit,$timeout)
+        {
+			$api_key = $this->API;
+			
+			$ch = curl_init("https://api.telegram.org/bot".$api_key."/getUpdates");
+			if ((version_compare(phpversion(), '5.5.0', '>='))) {
+				curl_setopt_array($ch, array(
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_SAFE_UPLOAD => false,
+				CURLOPT_POST => true,
+				CURLOPT_HEADER => false,
+				CURLOPT_HTTPHEADER => array(
+				'Host: api.telegram.org',
+				'Content-Type: multipart/form-data'
+				),
+				CURLOPT_POSTFIELDS => array(
+				'offset' => intval($offset),
+				'limit' => intval($limit),
+				'timeout' => intval($timeout)
+				),
+				CURLOPT_TIMEOUT => 0,
+				CURLOPT_CONNECTTIMEOUT => 6000,
+				CURLOPT_SSL_VERIFYPEER => false
+				));
+			}
+			else
+			{
+				curl_setopt_array($ch, array(
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_POST => true,
+				CURLOPT_HEADER => false,
+				CURLOPT_HTTPHEADER => array(
+				'Host: api.telegram.org',
+				'Content-Type: multipart/form-data'
+				),
+				CURLOPT_POSTFIELDS => array(
+				'offset' => intval($offset),
+				'limit' => intval($limit),
+				'timeout' => intval($timeout)
+				),
+				CURLOPT_TIMEOUT => 0,
+				CURLOPT_CONNECTTIMEOUT => 6000,
+				CURLOPT_SSL_VERIFYPEER => false
+				));
+			}
+			$res = curl_exec($ch);
+			curl_close($ch);
+			return json_decode($res,true);
+		}
 
         public function SendRawData($type,$Options)
         {
@@ -149,8 +212,9 @@ namespace CITADEL;
              CURLOPT_SSL_VERIFYPEER => false
              ));
          }
-       curl_exec($ch);
+       $res = curl_exec($ch);
        curl_close($ch);
+	   return $res;
        }
 
         public function GetChatName(){
@@ -248,6 +312,70 @@ namespace CITADEL;
 
         public function GetCommandData(){
         return str_replace((explode(" ",$this->DATA["message"]["text"])[0])." ",'',$this->DATA["message"]["text"]);
+        }
+		
+		public function GetInlineQuery(){
+        return $this->DATA["inline_query"];
+        }
+		
+		public function GetInlineQueryID(){
+        return $this->DATA["inline_query"]["id"];
+        }
+		
+		public function GetInlineQueryData(){
+        return $this->DATA["inline_query"]["query"];
+        }
+		
+		public function GetInlineQueryOffset(){
+        return $this->DATA["inline_query"]["offset"];
+        }
+		
+		public function GetInlineQueryUserID(){
+        return $this->DATA["inline_query"]["from"]["id"];
+        }
+		
+		public function GetInlineQueryUsername(){
+        return $this->DATA["inline_query"]["from"]["username"];
+        }
+		
+		public function GetInlineQueryFirstName(){
+        return $this->DATA["inline_query"]["from"]["first_name"];
+        }
+		
+		public function GetInlineQueryLastName(){
+        return $this->DATA["inline_query"]["from"]["last_name"];
+        }
+		
+		public function GetInlineQueryResultID(){
+        return $this->DATA["chosen_inline_result"]["result_id"];
+        }
+		
+		public function GetInlineQueryUpdateID(){
+		return $this->DATA["update_id"];
+        }
+		
+		public function GetInlineQueryResult(){
+        return $this->DATA["chosen_inline_result"];
+        }
+		
+		public function GetInlineQueryResultData(){
+        return $this->DATA["chosen_inline_result"]["query"];
+        }
+		
+		public function GetInlineQueryResultUserID(){
+        return $this->DATA["chosen_inline_result"]["from"]["id"];
+        }
+		
+		public function GetInlineQueryResultUsername(){
+        return $this->DATA["chosen_inline_result"]["from"]["username"];
+        }
+		
+		public function GetInlineQueryResultFirstName(){
+        return $this->DATA["chosen_inline_result"]["from"]["first_name"];
+        }
+		
+		public function GetInlineQueryResultLastName(){
+        return $this->DATA["chosen_inline_result"]["from"]["last_name"];
         }
 
         public function GetMessage()
@@ -456,7 +584,7 @@ namespace CITADEL;
             return "https://api.telegram.org/file/bot".$this->API."/$fpath";
         }
 
-        public function SendMessage($type, $user, $content, $keyboard="", $replyid="", $web=true)
+        public function SendMessage($type, $user, $content, $keyboard="", $replyid="", $web=true, $mark="HTML")
         {
             if(strpos($user,"@") !== false)
             {
@@ -484,6 +612,7 @@ namespace CITADEL;
              ),
              CURLOPT_POSTFIELDS => array(
                  'chat_id' => $user,
+				 'parse_mode' => $mark,
                  'reply_markup' => $keyboard,
                  'reply_to_message_id' => $replyid,
                  'disable_web_page_preview' => $web,
@@ -506,6 +635,7 @@ namespace CITADEL;
              ),
              CURLOPT_POSTFIELDS => array(
                  'chat_id' => $user,
+				 'parse_mode' => $mark,
                  'reply_markup' => $keyboard,
                  'reply_to_message_id' => $replyid,
                  'disable_web_page_preview' => $web,
@@ -516,10 +646,154 @@ namespace CITADEL;
              CURLOPT_SSL_VERIFYPEER => false
              ));
          }
-       curl_exec($ch);
+       $res = curl_exec($ch);
        curl_close($ch);
+	   return $res;
        }
+	   
+	    public function AnswerInlineQuery($ID, $result, $cache=300, $personal=false, $next="")
+        {
+          $api_key = $this->API;
 
+         $ch = curl_init("https://api.telegram.org/bot".$api_key."/answerInlineQuery");
+         if ((version_compare(phpversion(), '5.5.0', '>='))) {
+             curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_SAFE_UPLOAD => false,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => array(
+                 'inline_query_id' => $ID,
+				 'results' => json_encode($result),
+                 'cache_time' => $cache,
+                 'is_personal' => $personal,
+                 'next_offset' => $next
+             ),
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+             ));
+         }
+         else
+         {
+             curl_setopt_array($ch, array(
+             CURLOPT_RETURNTRANSFER => true,
+             CURLOPT_POST => true,
+             CURLOPT_HEADER => false,
+             CURLOPT_HTTPHEADER => array(
+                 'Host: api.telegram.org',
+                 'Content-Type: multipart/form-data'
+             ),
+             CURLOPT_POSTFIELDS => array(
+                 'inline_query_id' => $ID,
+				 'results' => json_encode($result),
+                 'cache_time' => $cache,
+                 'is_personal' => $personal,
+                 'next_offset' => $next
+             ),
+             CURLOPT_TIMEOUT => 0,
+             CURLOPT_CONNECTTIMEOUT => 6000,
+             CURLOPT_SSL_VERIFYPEER => false
+             ));
+         }
+       $res = curl_exec($ch);
+       curl_close($ch);
+	   return $res;
+       }
+	   
+	   public function InitArticle($id,$title="",$message="",$mode="HTML",$web=true,$url="",$hideurl=false,$description="",$thumburl="",$thumbwidth=0,$thumbheight=0)
+	   {
+		   $ArrData = array();
+		   $ArrData['type']= 'article';
+		   $ArrData['id']= $id;
+		   $ArrData['title']= $title;
+		   $ArrData['message_text']= $message;
+		   $ArrData['parse_mode']= $mode;
+		   $ArrData['disable_web_page_preview']= $web;
+		   $ArrData['url']= $url;
+		   $ArrData['hide_url']= $hideurl;
+		   $ArrData['description']= $description;
+		   $ArrData['thumb_url']= $thumburl;
+		   $ArrData['thumb_width']= $thumbwidth;
+		   $ArrData['thumb_height']= $thumbheight;
+		   return $ArrData;
+	   }
+	   
+	   public function InitPhoto($id,$photourl="",$photowidth=0,$photoheight=0,$thumburl="",$title="",$description="",$caption="",$message="",$mode="HTML",$web=true)
+	   {
+		   $ArrData = array();
+		   $ArrData['type']= 'photo';
+		   $ArrData['id']= $id;
+		   $ArrData['photo_url']= $photourl;
+		   $ArrData['photo_width']= $message;
+		   $ArrData['photo_height']= $mode;
+		   $ArrData['thumb_url']= $web;
+		   $ArrData['title']= $url;
+		   $ArrData['description']= $hideurl;
+		   $ArrData['caption']= $description;
+		   $ArrData['message_text']= $thumburl;
+		   $ArrData['parse_mode']= $thumbwidth;
+		   $ArrData['disable_web_page_preview']= $thumbheight;
+		   return $ArrData;
+	   }
+	   
+	   public function InitGif($id,$gifurl="",$gifwidth=0,$gifheight=0,$thumburl="",$title="",$caption="",$message="",$mode="HTML",$web=true)
+	   {
+		   $ArrData = array();
+		   $ArrData['type']= 'gif';
+		   $ArrData['id']= $id;
+		   $ArrData['gif_url']= $gifurl;
+		   $ArrData['gif_width']= $gifwidth;
+		   $ArrData['gif_height']= $gifheight;
+		   $ArrData['thumb_url']= $thumburl;
+		   $ArrData['title']= $title;
+		   $ArrData['caption']= $caption;
+		   $ArrData['message_text']= $message;
+		   $ArrData['parse_mode']= $mode;
+		   $ArrData['disable_web_page_preview']= $web;
+		   return $ArrData;
+	   }
+
+	   public function InitMGif($id,$gifurl="",$gifwidth=0,$gifheight=0,$thumburl="",$title="",$caption="",$message="",$mode="HTML",$web=true)
+	   {
+		   $ArrData = array();
+		   $ArrData['type']= 'mpeg4_gif';
+		   $ArrData['id']= $id;
+		   $ArrData['mpeg4_url']= $gifurl;
+		   $ArrData['mpeg4_width']= $gifwidth;
+		   $ArrData['mpeg4_height']= $gifheight;
+		   $ArrData['thumb_url']= $thumburl;
+		   $ArrData['title']= $title;
+		   $ArrData['caption']= $caption;
+		   $ArrData['message_text']= $message;
+		   $ArrData['parse_mode']= $mode;
+		   $ArrData['disable_web_page_preview']= $web;
+		   return $ArrData;
+	   }
+	   
+	   	   public function InitVideo($id,$videourl="",$videowidth=0,$videoheight=0,$duration="",$mime="video/mp4",$thumburl="",$title="",$caption="",$message="",$mode="HTML",$web=true)
+	   {
+		   $ArrData = array();
+		   $ArrData['type']= 'mpeg4_gif';
+		   $ArrData['id']= $id;
+		   $ArrData['video_url']= $gifurl;
+		   $ArrData['video_width']= $gifwidth;
+		   $ArrData['video_height']= $gifheight;
+		   $ArrData['video_duration']= $gifheight;
+		   $ArrData['mime_type']= $gifheight;
+		   $ArrData['thumb_url']= $thumburl;
+		   $ArrData['title']= $title;
+		   $ArrData['caption']= $caption;
+		   $ArrData['message_text']= $message;
+		   $ArrData['parse_mode']= $mode;
+		   $ArrData['disable_web_page_preview']= $web;
+		   return $ArrData;
+	   }
+	   
         public function SendMessageMioStack($type, $user, $content, $keyboard="" , $Secret="")
         {
           $apiendpoint = ucfirst($type);
@@ -574,8 +848,9 @@ namespace CITADEL;
              CURLOPT_SSL_VERIFYPEER => false
              ));
          }
-       curl_exec($ch);
+       $res = curl_exec($ch);
        curl_close($ch);
+	   return $res;
        }
 
         public function SendFileMioStack($type, $user, $content, $Secret="")
@@ -634,8 +909,9 @@ namespace CITADEL;
              CURLOPT_SSL_VERIFYPEER => false
             ));
             }
-            curl_exec($ch);
+            $res = curl_exec($ch);
             curl_close($ch);
+			return $res;
         }
 
         public function SendReply($userid, $message, $replyid="")
@@ -647,6 +923,8 @@ namespace CITADEL;
         {
             $this->SendMessage('message', $userid, $message, json_encode(array('keyboard' => $keyboard, 'resize_keyboard' => (bool)$resize, 'one_time_keyboard' => (bool)$onetime)));
         }
+		
+		
 
         public function NoKeyboard($userid,$message)
         {
@@ -686,7 +964,7 @@ namespace CITADEL;
 				$response = json_decode($response,true);
 				return $response;
 			}
-			else return false;
+			else return null;
         }
 
         public function IRPhoneCorrection($phone)
