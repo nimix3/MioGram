@@ -1,6 +1,6 @@
 <?php
-// CITADEL TBK (Telegram Bot SDK) V.3.0 By NIMIX3 for MioGram Platform.
-// NOTE : PLEASE DON'T EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
+// CITADEL Library(Telegram Bot SDK) V.3.5 By NIMIX3 for MioGram Platform.
+// NOTE : PLEASE DO NOT EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
 // Under GNU GPL V.3 License
 namespace CITADEL;
     class _xCITADEL
@@ -13,7 +13,7 @@ namespace CITADEL;
         $this->DATA = json_decode(file_get_contents('php://input'), true);
         }
 
-        public function SendToChannel($type, $user, $content)
+        public function SendToChannel($type, $user, $content, $captionx, $notify=false)
         {
             $api_key = $this->API;
             $apiendpoint = ucfirst($type);
@@ -24,11 +24,37 @@ namespace CITADEL;
             }
             else
             {
-                $content = file_get_contents($content);
-            }
+				if ((version_compare(phpversion(), '5.5.0', '>='))) {
+				$WEBSERVICE = "https://api.telegram.org/bot".$api_key."/send".$apiendpoint."?chat_id=" . $user;
+				
+				$post_fields = array('chat_id'   => $user,
+				'caption' => $captionx,
+				'parse_mode' => 'HTML',
+				'disable_notification' => $notify,
+				$type => new \CurlFile(realpath($content))
+				);
+				
+				$ch = curl_init(); 
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+				"Content-Type:multipart/form-data"
+				));
+				curl_setopt($ch, CURLOPT_URL, $WEBSERVICE); 
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_SAFE_UPLOAD, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $post_fields); 
+				$output = curl_exec($ch);
+				curl_close($ch);
+				return $output;
+				}
+				else
+					return "PHP >= 5.5 Needed To Execute This Method!";
+			}
             $WEBSERVICE = "https://api.telegram.org/bot".$api_key."/send".$apiendpoint;
             $postData = http_build_query(array(
                 'chat_id' => $user,
+				'caption' => $captionx,
+				'parse_mode' => 'HTML',
+				'disable_notification' => $notify,
                 $type => $content
             ));
             
@@ -42,7 +68,7 @@ namespace CITADEL;
 			return $response;
         }
 
-        public function SendFile($type, $user, $content, $caption="", $title="")
+        public function SendFile($type, $user, $content, $caption="", $title="", $notify=false)
         {
           $api_key = $this->API;
          $apiendpoint = ucfirst($type);
@@ -69,6 +95,7 @@ namespace CITADEL;
 			'caption'=> $caption,
 			'title'=> $title,
 			'parse_mode' => 'Markdown',
+			'disable_notification' => $notify,
             $type => $content
         ),
         CURLOPT_TIMEOUT => 0,
@@ -91,6 +118,7 @@ namespace CITADEL;
 			'caption'=> $caption,
 			'title'=> $title,
 			'parse_mode' => 'Markdown',
+			'disable_notification' => $notify,
              $type => $content
          ),
          CURLOPT_TIMEOUT => 0,
@@ -584,7 +612,7 @@ namespace CITADEL;
             return "https://api.telegram.org/file/bot".$this->API."/$fpath";
         }
 
-        public function SendMessage($type, $user, $content, $keyboard="", $replyid="", $web=true, $mark="HTML")
+        public function SendMessage($type, $user, $content, $keyboard="", $replyid="", $web=true, $mark="HTML", $notify=false)
         {
             if(strpos($user,"@") !== false)
             {
@@ -616,6 +644,7 @@ namespace CITADEL;
                  'reply_markup' => $keyboard,
                  'reply_to_message_id' => $replyid,
                  'disable_web_page_preview' => $web,
+				 'disable_notification' => $notify,
                  $type => $content
              ),
              CURLOPT_TIMEOUT => 0,
@@ -639,6 +668,7 @@ namespace CITADEL;
                  'reply_markup' => $keyboard,
                  'reply_to_message_id' => $replyid,
                  'disable_web_page_preview' => $web,
+				 'disable_notification' => $notify,
                  $type => $content
              ),
              CURLOPT_TIMEOUT => 0,
@@ -650,6 +680,28 @@ namespace CITADEL;
        curl_close($ch);
 	   return $res;
        }
+	   
+		public function ForwardMessage($target, $from, $msgid, $notify=false)
+        {
+			$api_key = $this->API;
+
+            $WEBSERVICE = "https://api.telegram.org/bot".$api_key."/forwardMessage";
+            $postData = http_build_query(array(
+			'chat_id' => $target,
+			'from_chat_id' => $from,
+			'message_id' => $msgid,
+			'disable_notification' => $notify
+            ));
+            
+            $context = stream_context_create(array(
+			'http' => array(
+			'method' => 'POST',
+			'header' => "Content-Type: application/x-www-form-urlencoded\r\n",
+			'content' => $postData
+			)));
+            $response = file_get_contents($WEBSERVICE, FALSE, $context);
+			return $response;
+		}
 	   
 	    public function AnswerInlineQuery($ID, $result, $cache=300, $personal=false, $next="")
         {
@@ -924,14 +976,17 @@ namespace CITADEL;
             $this->SendMessage('message', $userid, $message, json_encode(array('keyboard' => $keyboard, 'resize_keyboard' => (bool)$resize, 'one_time_keyboard' => (bool)$onetime)));
         }
 		
-		
+	public function ForceReply($selective)
+        {
+            $this->SendMessage('message', $userid, $message, json_encode(array('force_reply' => true, 'selective' => (bool)$selective)));
+        }
 
         public function NoKeyboard($userid,$message)
         {
             $this->SendMessage('message', $userid, $message, json_encode(array('hide_keyboard' => true)));  
         }
 		
-		public function SetKeyboardMioStack($userid,$message,$keyboard,$Secret="",$onetime=false,$resize=true)
+	public function SetKeyboardMioStack($userid,$message,$keyboard,$Secret="",$onetime=false,$resize=true)
         {
             $this->SendMessageMioStack('message', $userid, $message, json_encode(array('keyboard' => $keyboard, 'resize_keyboard' => (bool)$resize, 'one_time_keyboard' => (bool)$onetime)));
         }
