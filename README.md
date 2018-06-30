@@ -1,4 +1,4 @@
-# MioGram
+# MioGram Community Edition
 
 This is full implemented library that handles telegram bot api and platform in pure php environment for the first time.
 All Projects Of MioGram Community Edition.
@@ -7,7 +7,7 @@ All Projects Of MioGram Community Edition.
 
 # CITADEL BOT SDK Library :
 
- CITADEL SDK (Telegram Bot SDK) V.1 Community Edition By NIMIX3.
+ CITADEL SDK (Telegram Bot SDK) V.1 Community Edition By NIMIX3 for MioGram Community Edition.
  NOTE : YOU CANNOT EDIT or SELL This CODE FOR COMMERCIAL PURPOSE!
  Under GNU GPL V.3 License
 
@@ -31,6 +31,8 @@ All Projects Of MioGram Community Edition.
 ### API, Protocol documentation
 
 Documentation for Telegram API is available here: https://core.telegram.org/api
+
+Documentation for Telegram Bot API is available here: https://core.telegram.org/bots/api
 
 Documentation for MTproto protocol is available here: https://core.telegram.org/mtproto
 
