@@ -1,0 +1,26 @@
+; Directories Configurations ;
+AssetDir = "Assets"
+StorageDir = "Storage"
+HookPluginDir = "Plugins/Hooks"
+CronPluginDir = "Plugins/Crons"
+BaseLibraryDir = "Library/basement"
+3rdpLibraryDir = "Library/3rdparty"
+Logdir = "Storage/Logs"
+Website = "https://miogram.com/"
+BaseDir = "Robot/"
+BotUsername = "MioGramTestBot"
+
+; Telegram Bot API Configuration ;
+BotAPI = "000000000:AAAAAAAAAAAABBBBBBBBBBXXXXXXXXXXXXX"
+
+; Administrator Configurations ;
+Username = ""
+Password = ""
+
+; Database Configurations ;
+DBserver = "localhost"
+DBuser = "miogram_dbbot"
+DBpass = "p@$$w0rd"
+DBname = "miogram_dbbot"
+DBcharset = "utf8mb4"
+DBport = "3306"

@@ -1,0 +1,25 @@
+﻿@font-face {
+  font-family: 'itr';
+  src: url('../fonts/BYekan.eot?#') format('eot'),  /* IE6–8 */
+       url('../fonts/BYekan.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+       url('../fonts/BYekan.ttf') format('truetype');  /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+
+@font-face {
+  font-family: 'itr1';
+  src: url('../fonts/BTitrBold.eot?#') format('eot'),  /* IE6–8 */
+       url('../fonts/BTitrBold.woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+       url('../fonts/BTitrBold.ttf') format('truetype');  /* Saf3—5, Chrome4+, FF3.5, Opera 10+ */
+}
+@font-face {
+	font-family: iransans;
+	font-style: normal;
+	font-weight: normal;
+	src: url('../fonts/IRANSansWeb(FaNum).eot');
+	src: url('../fonts/IRANSansWeb(FaNum).eot?#iefix') format('embedded-opentype'),  /* IE6-8 */
+		 url('../fonts/IRANSansWeb(FaNum).woff2') format('woff2'),  /* FF39+,Chrome36+, Opera24+*/
+		 url('../fonts/IRANSansWeb(FaNum).woff') format('woff'),  /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
+		 url('../fonts/IRANSansWeb(FaNum).ttf') format('truetype');
+}
+
+

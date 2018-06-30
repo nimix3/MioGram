@@ -1,0 +1,6 @@
+; STRINGs
+load_survey_msg = "نظر جدید بارگذاری شد"
+loaderr_survey_msg = "نظر جدید بارگذاری نشد!"
+; BUTTONs
+button_next = "▶️ نظر بعدی"
+button_back = "نظر قبلی ◀️"
