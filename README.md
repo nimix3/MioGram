@@ -15,7 +15,7 @@ All Projects Of MioGram Community Edition.
 
 ### Authors:
 
-- NIMIX3 (Nima Akhlaghi)
+- @NIMIX3 (Nima Akhlaghi)
 
 
 
