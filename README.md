@@ -1,4 +1,6 @@
 # MioGram Community Edition
+[![Telegram group](https://img.shields.io/badge/TELEGRAM-GROUP-green.svg)](https://t.me/joinchat/BjokYUiYV6gK9FCUNiB7lw)
+[![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/nimix3/MioGram/blob/master/LICENSE)
 
 This is full implemented library that handles telegram bot api and platform in pure php environment for the first time.
 All Projects Of MioGram Community Edition.
